@@ -176,4 +176,8 @@ thead {
     min-height: 400px;
     overflow: scroll;
   }
+
+  .btns-form{
+    justify-content: center;
+  }
 }

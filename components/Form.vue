@@ -69,7 +69,7 @@ const resetForm = () => {
         :required-prop="true"
       />
       <div class="form-group">
-        <label for="executive">Ejecutivo</label>
+        <label for="executive">Ejecutivo<strong style="color: red">*</strong></label>
         <select name="executive" id="executive" v-model="formData.executive">
           <option value="" selected disabled>Seleccione un ejecutivo</option>
           <option
