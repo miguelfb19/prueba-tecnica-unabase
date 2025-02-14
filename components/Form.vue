@@ -1,56 +1,36 @@
 <script setup>
+import { useFormStore } from "~/store/form-inputs";
+import { useEditingStore } from "~/store/is-editing-store";
 import { useProjectsStore } from "~/store/projects";
 
-const formData = ref({
-  name: "",
-  executive: "",
-  client: "",
-  contact: "",
-  bussinesType: "",
-});
-
-const isEditing = ref(false);
-const editingProject = ref(null);
+const formStore = useFormStore();
+const editingStore = useEditingStore();
 
 const availableExecutivesData = await getExecutives();
 const availableExecutivesNames = availableExecutivesData.map(
   (executive) => executive.data.legalName
 );
 
-const store = useProjectsStore();
+const projectStore = useProjectsStore();
 
 const onSubmit = async (e) => {
   e.preventDefault();
 
-  if (isEditing.value && editingProject.value !== null) {
+  if (editingStore.isEditing && formStore.formInputs.name !== "") {
     // Editar el proyecto
-    store.projects[editingProject.value] = formData.value;
-    isEditing.value = false;
-    editingIndex.value = null;
+    projectStore.editProject(formStore.formInputs);
+    editingStore.setFalse()
+    resetForm();
   } else {
     // Agregar nuevo proyecto
-    store.addProject(formData.value);
+    projectStore.addProject(formStore.formInputs);
+    resetForm();
   }
-
-  resetForm();
-};
-
-const editProject = (project, index) => {
-  formData.value = { ...project };
-  isEditing.value = true;
-  editingIndex.value = index;
 };
 
 const resetForm = () => {
-  formData.value = {
-    name: "",
-    executive: "",
-    client: "",
-    contact: "",
-    bussinesType: "",
-  };
-  isEditing.value = false;
-  editingIndex.value = null;
+  formStore.reset()
+  editingStore.setFalse()
 };
 </script>
 
@@ -63,12 +43,14 @@ const resetForm = () => {
       <FormInput
         label="nombre"
         placeholder-prop="Ingrese nombre del proyecto"
-        v-model="formData.name"
+        v-model="formStore.formInputs.name"
         :required-prop="true"
       />
       <div class="form-group">
-        <label for="executive">Ejecutivo<strong style="color: red">*</strong></label>
-        <select name="executive" id="executive" v-model="formData.executive">
+        <label for="executive"
+          >Ejecutivo<strong style="color: red">*</strong></label
+        >
+        <select name="executive" id="executive" v-model="formStore.formInputs.executive">
           <option value="" selected disabled>Seleccione un ejecutivo</option>
           <option
             v-for="executive in availableExecutivesNames"
@@ -82,16 +64,16 @@ const resetForm = () => {
       <FormInput
         label="cliente"
         placeholder-prop="Buscar cliente"
-        v-model="formData.client"
+        v-model="formStore.formInputs.client"
       />
       <FormInput
         label="contacto"
         placeholder-prop="Buscar contacto"
-        v-model="formData.contact"
+        v-model="formStore.formInputs.contact"
       />
       <div class="form-group">
         <label for="tipo">Tipo<strong style="color: red">*</strong></label>
-        <select name="tipo" id="tipo" v-model="formData.bussinesType" required>
+        <select name="tipo" id="tipo" v-model="formStore.formInputs.bussinesType" required>
           <option value="" disabled selected>Selecciona una opción...</option>
           <option value="cotizacion">Cotización</option>
           <option value="negocio">Negocio</option>
@@ -101,7 +83,7 @@ const resetForm = () => {
         <ButtonOutline :on-delete="resetForm" />
         <Button
           type-prop="submit"
-          :text="isEditing ? 'Actualizar' : 'Guardar'"
+          :text="editingStore.isEditing ? 'Actualizar' : 'Guardar'"
         />
       </div>
     </form>

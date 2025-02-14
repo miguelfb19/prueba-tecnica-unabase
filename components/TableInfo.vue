@@ -8,7 +8,7 @@
       </tr>
     </thead>
     <tbody>
-      <tr v-for="project in store.projects" :key="project.name">
+      <tr v-for="project in projectStore.projects" :key="project.name">
         <td>{{ project.name }}</td>
         <td>
           <i class="pi pi-user icon" />
@@ -20,7 +20,11 @@
             type-prop="button"
             :on-delete="() => deleteProject(project.name)"
           />
-          <Button text="Editar" type-prop="button" :on-click="() => editProject(project, index)"  />
+          <Button
+            text="Editar"
+            type-prop="button"
+            :on-click="() => editProject(project)"
+          />
         </td>
       </tr>
     </tbody>
@@ -29,9 +33,13 @@
 
 <script setup>
 import Swal from "sweetalert2";
-import { useProjectsStore } from "~/store/projects";
+import { useFormStore } from "@/store/form-inputs";
+import { useEditingStore } from "@/store/is-editing-store";
+import { useProjectsStore } from "@/store/projects";
 
-const store = useProjectsStore();
+const projectStore = useProjectsStore();
+const editingStore = useEditingStore();
+const formStore = useFormStore();
 
 const deleteProject = (projectName) => {
   Swal.fire({
@@ -43,7 +51,7 @@ const deleteProject = (projectName) => {
     denyButtonColor: "red",
   }).then((result) => {
     if (result.isConfirmed) {
-      store.removeProject(projectName);
+      projectStore.removeProject(projectName);
       Swal.fire({
         title: "Eliminado",
         confirmButtonText: "ok",
@@ -56,7 +64,9 @@ const deleteProject = (projectName) => {
   });
 };
 
-// const editProject = () => {
-//   alert("edit project");
-// };
+const editProject = (project) => {
+  console.log(project)
+  editingStore.setTrue();
+  formStore.setValue(project);
+};
 </script>
