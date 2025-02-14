@@ -67,6 +67,7 @@ body {
 
 .btns-form {
   display: flex;
+  justify-content: center;
   width: 100%;
   gap: 1rem;
 }
@@ -175,9 +176,5 @@ thead {
     grid-column: span 2;
     min-height: 400px;
     overflow: scroll;
-  }
-
-  .btns-form{
-    justify-content: center;
   }
 }
