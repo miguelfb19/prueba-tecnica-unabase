@@ -17,8 +17,6 @@ const availableExecutivesNames = availableExecutivesData.map(
   (executive) => executive.data.legalName
 );
 
-console.log(availableExecutivesData);
-
 const store = useProjectsStore();
 
 const onSubmit = async (e) => {
