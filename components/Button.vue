@@ -4,8 +4,9 @@
 
 <script setup>
 defineProps({
-  text: { type: String, default: "Guardar" },
+  text: { type: String },
   typeProp: { type: String, default: "submit" },
   onClick: { type: Function },
+  isEditing: { type: Boolean, default: false }
 });
 </script>

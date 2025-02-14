@@ -12,3 +12,4 @@ import { ViewStore } from '../.nuxt/components';
   </NuxtLayout>
   <ViewStore />
 </template>
+

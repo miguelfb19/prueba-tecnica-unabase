@@ -20,7 +20,7 @@
             type-prop="button"
             :on-delete="() => deleteProject(project.name)"
           />
-          <Button text="Editar" type-prop="button" :on-click="editProject" />
+          <Button text="Editar" type-prop="button" :on-click="() => editProject(project, index)"  />
         </td>
       </tr>
     </tbody>
@@ -56,7 +56,7 @@ const deleteProject = (projectName) => {
   });
 };
 
-const editProject = () => {
-  alert("edit project");
-};
+// const editProject = () => {
+//   alert("edit project");
+// };
 </script>

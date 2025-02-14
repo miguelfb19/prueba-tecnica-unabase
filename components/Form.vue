@@ -9,16 +9,38 @@ const formData = ref({
   bussinesType: "",
 });
 
-// const executives = await getExecutives();
-// console.log(executives);
+const isEditing = ref(false);
+const editingProject = ref(null);
+
+const availableExecutivesData = await getExecutives();
+const availableExecutivesNames = availableExecutivesData.map(
+  (executive) => executive.data.legalName
+);
+
+console.log(availableExecutivesData);
+
 const store = useProjectsStore();
 
 const onSubmit = async (e) => {
   e.preventDefault();
 
-  store.addProject(formData.value);
+  if (isEditing.value && editingProject.value !== null) {
+    // Editar el proyecto
+    store.projects[editingProject.value] = formData.value;
+    isEditing.value = false;
+    editingIndex.value = null;
+  } else {
+    // Agregar nuevo proyecto
+    store.addProject(formData.value);
+  }
 
   resetForm();
+};
+
+const editProject = (project, index) => {
+  formData.value = { ...project };
+  isEditing.value = true;
+  editingIndex.value = index;
 };
 
 const resetForm = () => {
@@ -29,6 +51,8 @@ const resetForm = () => {
     contact: "",
     bussinesType: "",
   };
+  isEditing.value = false;
+  editingIndex.value = null;
 };
 </script>
 
@@ -44,12 +68,19 @@ const resetForm = () => {
         v-model="formData.name"
         :required-prop="true"
       />
-      <FormInput
-        label="ejecutivo"
-        placeholder-prop="Buscar ejecutivo"
-        :required-prop="true"
-        v-model="formData.executive"
-      />
+      <div class="form-group">
+        <label for="executive">Ejecutivo</label>
+        <select name="executive" id="executive" v-model="formData.executive">
+          <option value="" selected disabled>Seleccione un ejecutivo</option>
+          <option
+            v-for="executive in availableExecutivesNames"
+            :key="executive"
+            :value="executive"
+          >
+            {{ executive }}
+          </option>
+        </select>
+      </div>
       <FormInput
         label="cliente"
         placeholder-prop="Buscar cliente"
@@ -70,7 +101,10 @@ const resetForm = () => {
       </div>
       <div class="btns-form">
         <ButtonOutline :on-delete="resetForm" />
-        <Button type-prop="submit" />
+        <Button
+          type-prop="submit"
+          :text="isEditing ? 'Actualizar' : 'Guardar'"
+        />
       </div>
     </form>
   </div>
